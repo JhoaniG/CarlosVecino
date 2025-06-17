@@ -23,13 +23,13 @@ import modelo.UsuarioDao;
  */
 @WebServlet("/UsuarioController")
 public class UsuarioController extends HttpServlet {
-UsuarioDao usu_dao = new UsuarioDao();
-Usuario usu= new Usuario();
-   
+
+    UsuarioDao usu_dao = new UsuarioDao();
+    Usuario usu = new Usuario();
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, ClassNotFoundException {
-        
-         
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -44,35 +44,50 @@ Usuario usu= new Usuario();
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String menu= request.getParameter("menu");
-        String accion= request.getParameter("accion");
+        String menu = request.getParameter("menu");
+        String accion = request.getParameter("accion");
         if (menu.equals("admin")) {
             request.getRequestDispatcher("admin/admin.jsp").forward(request, response);
-            
+
         }
         if (menu.equals("Usuarios")) {
-            switch(accion){
+            switch (accion) {
                 case "Listar":
                     List<Usuario> lista_usu = null;
-                try {
-                    lista_usu = usu_dao.listar();
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(UsuarioController.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                    try {
+                        lista_usu = usu_dao.listar();
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(UsuarioController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     request.setAttribute("lista_usuarios", lista_usu);
-                    
-                    
+
                     break;
 
                 case "Agregar":
+                    request.getRequestDispatcher("admin/register.jsp").forward(request, response);
                     break;
-                    
-        
-        }
+                case "Editar":
+                    int idEditar = Integer.parseInt(request.getParameter("id"));
+                    Usuario usuarioEdit = null;
+                    try {
+                        usuarioEdit = usu_dao.buscarPorId(idEditar);
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(UsuarioController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    request.setAttribute("usuarioEditar", usuarioEdit);
+                    request.getRequestDispatcher("admin/editar.jsp").forward(request, response);
+                    break;
+
+                case "Eliminar":
+                    int idEliminar = Integer.parseInt(request.getParameter("id"));
+                    usu_dao.eliminar(idEliminar);
+                    response.sendRedirect("UsuarioController?menu=Usuarios&accion=Listar");
+                    return;
+
+            }
             request.getRequestDispatcher("admin/usuarios.jsp").forward(request, response);
         }
-        
-        
+
     }
 
     /**
@@ -86,36 +101,46 @@ Usuario usu= new Usuario();
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-          String accion = request.getParameter("accion");
+        String accion = request.getParameter("accion");
 
-    if ("insertar".equals(accion)) {
-        Usuario u = new Usuario();
-        u.setNombre(request.getParameter("nombre"));
-        u.setApellido(request.getParameter("apellido"));
-        u.setCorreo(request.getParameter("correo"));
-        u.setTelefono(request.getParameter("telefono"));
-        u.setDocumento(request.getParameter("documento"));
-        u.setContrasena(request.getParameter("contrasena"));
-        u.setRol_id(Integer.parseInt(request.getParameter("rol_id")));
+        if ("registrar".equals(accion)) {
+            Usuario u = new Usuario();
+            u.setNombre(request.getParameter("nombre"));
+            u.setApellido(request.getParameter("apellido"));
+            u.setCorreo(request.getParameter("correo"));
+            u.setContrasena(request.getParameter("contrasena"));
+            u.setTelefono(request.getParameter("telefono"));
+            u.setDocumento(request.getParameter("documento"));
+            u.setRol_id(Integer.parseInt(request.getParameter("rol_id")));
 
-        UsuarioDao usu_dao = new UsuarioDao();
-        usu_dao.registrar(u); // <-- Este método lo defines en tu DAO
+            boolean exito = usu_dao.registrar(u);
 
-        response.sendRedirect("admin/usuarios.jsp");
+            if (exito) {
+                response.sendRedirect("UsuarioController?menu=Usuarios&accion=Listar"); // Redirige a la lista de usuarios
+            } else {
+                response.sendRedirect("admin/register.jsp?error=1");
+            }
+        }
+        if ("actualizar".equals(accion)) {
+            Usuario u = new Usuario();
+            u.setId(Integer.parseInt(request.getParameter("id")));
+            u.setNombre(request.getParameter("nombre"));
+            u.setApellido(request.getParameter("apellido"));
+            u.setCorreo(request.getParameter("correo"));
+            u.setContrasena(request.getParameter("contrasena"));
+            u.setTelefono(request.getParameter("telefono"));
+            u.setDocumento(request.getParameter("documento"));
+            u.setRol_id(Integer.parseInt(request.getParameter("rol_id")));
+
+            boolean actualizado = usu_dao.actualizar(u);
+
+            if (actualizado) {
+                response.sendRedirect("UsuarioController?menu=Usuarios&accion=Listar");
+            } else {
+                response.sendRedirect("admin/register.jsp?error=2");
+            }
+        }
+
     }
-    }
-      
-    
-
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 
 }

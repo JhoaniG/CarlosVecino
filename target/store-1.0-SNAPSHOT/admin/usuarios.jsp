@@ -9,122 +9,126 @@
 <%@page session="true"%>
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Usuarios - ANJOS</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  
-  <!-- Font Awesome para íconos -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f4f6f9;
-      padding-top: 60px;
-    }
+    <head>
+        <meta charset="UTF-8">
+        <title>Usuarios - ANJOS</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    .navbar {
-      background-color: #1a237e;
-    }
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    .navbar-brand, .nav-link, .dropdown-toggle {
-      color: white !important;
-    }
+        <!-- Font Awesome para íconos -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    .section {
-      margin-top: 30px;
-      background: white;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
+        <style>
+            body {
+                font-family: 'Segoe UI', sans-serif;
+                background-color: #f4f6f9;
+                padding-top: 60px;
+            }
 
-    h3.section-title {
-      color: #1a237e;
-      margin-bottom: 20px;
-    }
+            .navbar {
+                background-color: #1a237e;
+            }
 
-    table th {
-      background-color: #1a237e;
-      color: white;
-    }
-  </style>
-</head>
-<body>
+            .navbar-brand, .nav-link, .dropdown-toggle {
+                color: white !important;
+            }
 
- <%@include file="/admin/adminNav.jsp" %>
+            .section {
+                margin-top: 30px;
+                background: white;
+                border-radius: 10px;
+                padding: 20px;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            }
 
-  <!-- Contenido principal -->
-  <div class="container">
-    <div class="section">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3 class="section-title">Gestión de Usuarios</h3>
-        <a href="admin/register.jsp" class="btn btn-success"><i class="fas fa-user-plus"></i> Registrar Usuario</a>
-      </div>
+            h3.section-title {
+                color: #1a237e;
+                margin-bottom: 20px;
+            }
 
-      <!-- Barra de búsqueda -->
-      <div class="input-group mb-3">
-        <input type="text" id="buscarUsuario" class="form-control" placeholder="Buscar usuario..." onkeyup="filtrarUsuarios()">
-        <span class="input-group-text"><i class="fas fa-search"></i></span>
-      </div>
+            table th {
+                background-color: #1a237e;
+                color: white;
+            }
+        </style>
+    </head>
+    <body>
 
-      <div class="table-responsive">
-        <table class="table table-bordered table-hover" id="tablaUsuarios">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nombre</th>
-              <th>Apellido</th>
-              <th>Correo</th>
-              <th>Teléfono</th>
-              <th>Documento</th>
-              <th>Rol ID</th>
-              <th>Rol</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <c:forEach var="u" items="${lista_usuarios}">
-              <tr>
-                <td>${u.getId()}</td>
-                <td>${u.getNombre()}</td>
-                <td>${u.getApellido()}</td>
-                <td>${u.getCorreo()}</td>
-                <td>${u.getTelefono()}</td>
-                <td>${u.getDocumento()}</td>
-                <td>${u.getRol_id()}</td>
-                <td>${u.getRolNombre()}</td>
-                <td>
-                  <button class="btn btn-warning btn-sm"><i class="fas fa-edit"></i> Editar</button>
-                  <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Eliminar</button>
-                </td>
-              </tr>
-            </c:forEach>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
+        <%@include file="/admin/adminNav.jsp" %>
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Contenido principal -->
+        <div class="container">
+            <div class="section">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="section-title">Gestión de Usuarios</h3>
+                    <a href="UsuarioController?menu=Usuarios&accion=Agregar" class="btn btn-success"><i class="fas fa-user-plus"></i> Registrar Usuario</a>
+                </div>
 
-  <!-- Script de filtro -->
-  <script>
-    function filtrarUsuarios() {
-      const input = document.getElementById("buscarUsuario").value.toLowerCase();
-      const filas = document.querySelectorAll("#tablaUsuarios tbody tr");
+                <!-- Barra de búsqueda -->
+                <div class="input-group mb-3">
+                    <input type="text" id="buscarUsuario" class="form-control" placeholder="Buscar usuario..." onkeyup="filtrarUsuarios()">
+                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                </div>
 
-      filas.forEach(fila => {
-        const textoFila = fila.innerText.toLowerCase();
-        fila.style.display = textoFila.includes(input) ? "" : "none";
-      });
-    }
-  </script>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover" id="tablaUsuarios">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Apellido</th>
+                                <th>Correo</th>
+                                <th>Teléfono</th>
+                                <th>Documento</th>
+                                <th>Rol ID</th>
+                                <th>Rol</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach var="u" items="${lista_usuarios}">
+                                <tr>
+                                    <td>${u.getId()}</td>
+                                    <td>${u.getNombre()}</td>
+                                    <td>${u.getApellido()}</td>
+                                    <td>${u.getCorreo()}</td>
+                                    <td>${u.getTelefono()}</td>
+                                    <td>${u.getDocumento()}</td>
+                                    <td>${u.getRol_id()}</td>
+                                    <td>${u.getRolNombre()}</td>
+                                    <td>
+                                        <a href="UsuarioController?menu=Usuarios&accion=Editar&id=${u.getId()}" class="btn btn-warning btn-sm">
+                                            <i class="fas fa-edit"></i> Editar
+                                        </a>
+                                        <a href="UsuarioController?menu=Usuarios&accion=Eliminar&id=${u.getId()}" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar este usuario?');">
+                                            <i class="fas fa-trash-alt"></i> Eliminar
+                                        </a>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
 
-</body>
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+        <!-- Script de filtro -->
+        <script>
+            function filtrarUsuarios() {
+                const input = document.getElementById("buscarUsuario").value.toLowerCase();
+                const filas = document.querySelectorAll("#tablaUsuarios tbody tr");
+
+                filas.forEach(fila => {
+                    const textoFila = fila.innerText.toLowerCase();
+                    fila.style.display = textoFila.includes(input) ? "" : "none";
+                });
+            }
+        </script>
+
+    </body>
 </html>

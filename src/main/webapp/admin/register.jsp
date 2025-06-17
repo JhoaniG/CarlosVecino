@@ -60,7 +60,7 @@
         <h3 class="form-title"><i class="fas fa-user-plus"></i> Registrar Usuario</h3>
 
         <form action="${pageContext.request.contextPath}/UsuarioController" method="POST">
-          <input type="hidden" name="accion" value="insertar">
+          <input type="hidden" name="accion" value="registrar">
 
           <div class="row mb-3">
             <div class="col-md-6">
