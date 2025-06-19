@@ -62,7 +62,7 @@
   <div class="container section">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h3 class="section-title">Lista de Créditos</h3>
-      <a href="registrar_credito.html" class="btn btn-success"><i class="fas fa-plus"></i> Registrar Crédito</a>
+      <a href="CreditoController?menu=Creditos&accion=Agregar" class="btn btn-success"><i class="fas fa-plus"></i> Registrar Crédito</a>
     </div>
 
     <!-- Barra de búsqueda -->
@@ -99,10 +99,14 @@
               <td>${u.getProducto_id()}</td>
               <td>${u.getNomcli()}</td>
               <td>${u.getNompro()}</td>
-              <td>
-                <button class="btn btn-warning btn-sm"><i class="fas fa-edit"></i> Editar</button>
-                <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Eliminar</button>
-              </td>
+               <td>
+            <a href="CreditoController?menu=Creditos&accion=Editar&id=${u.getId()}" class="btn btn-warning btn-sm">
+              <i class="fas fa-edit"></i> Editar
+            </a>
+            <a href="CreditoController?menu=Creditos&accion=Eliminar&id=${u.getId()}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este crédito?');">
+              <i class="fas fa-trash-alt"></i> Eliminar
+            </a>
+          </td>
             </tr>
           </c:forEach>
         </tbody>

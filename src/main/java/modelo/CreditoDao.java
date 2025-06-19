@@ -57,5 +57,83 @@ public class CreditoDao {
 
         return lista;
     }
-    
+      public boolean insertar(Credito c) throws ClassNotFoundException {
+        String sql = "INSERT INTO creditos (cliente_id, monto, fecha_emision, fecha_vencimiento, estado, producto_id) " +
+                     "VALUES (?, ?, ?, ?, ?, ?)";
+        try {
+            conn = cn.conexion();
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, c.getCliente_id());
+            ps.setDouble(2, c.getMonto());
+            ps.setDate(3, new java.sql.Date(c.getFecha_emision().getTime()));
+            ps.setDate(4, new java.sql.Date(c.getFecha_vencimiento().getTime()));
+            ps.setString(5, c.getEstado());
+            ps.setInt(6, c.getProducto_id());
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Error al insertar credito: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean actualizar(Credito c) throws ClassNotFoundException {
+        String sql = "UPDATE creditos SET cliente_id=?, monto=?, fecha_emision=?, fecha_vencimiento=?, estado=?, producto_id=? WHERE id=?";
+        try {
+            conn = cn.conexion();
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, c.getCliente_id());
+            ps.setDouble(2, c.getMonto());
+            ps.setDate(3, new java.sql.Date(c.getFecha_emision().getTime()));
+            ps.setDate(4, new java.sql.Date(c.getFecha_vencimiento().getTime()));
+            ps.setString(5, c.getEstado());
+            ps.setInt(6, c.getProducto_id());
+            ps.setInt(7, c.getId());
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Error al actualizar credito: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean eliminar(int id) throws ClassNotFoundException {
+        String sql = "DELETE FROM creditos WHERE id=?";
+        try {
+            conn = cn.conexion();
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Error al eliminar credito: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public Credito buscarPorId(int id) throws ClassNotFoundException {
+        String sql = "SELECT * FROM creditos WHERE id=?";
+        Credito c = new Credito();
+        try {
+            conn = cn.conexion();
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                c.setId(rs.getInt("id"));
+                c.setCliente_id(rs.getString("cliente_id"));
+                c.setMonto(rs.getDouble("monto"));
+                c.setFecha_emision(rs.getDate("fecha_emision"));
+                c.setFecha_vencimiento(rs.getDate("fecha_vencimiento"));
+                c.setEstado(rs.getString("estado"));
+                c.setProducto_id(rs.getInt("producto_id"));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al buscar credito: " + e.getMessage());
+        }
+        return c;
+    }
 }
+
+    
+

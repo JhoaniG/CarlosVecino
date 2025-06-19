@@ -46,5 +46,74 @@ public class PagoDao {
 
     return Lista;
 }
+      public boolean insertar(Pago p) throws ClassNotFoundException {
+        String sql = "INSERT INTO pagos (credito_id, monto, fecha, tipo_pago) VALUES (?, ?, ?, ?)";
+        try {
+            conn = cn.conexion();
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, p.getCredito_id());
+            ps.setDouble(2, p.getMonto());
+            ps.setDate(3, new java.sql.Date(p.getFecha().getTime()));
+            ps.setString(4, p.getTipo_pago());
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("ERROR al insertar pago: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean actualizar(Pago p) throws ClassNotFoundException {
+        String sql = "UPDATE pagos SET credito_id = ?, monto = ?, fecha = ?, tipo_pago = ? WHERE id = ?";
+        try {
+            conn = cn.conexion();
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, p.getCredito_id());
+            ps.setDouble(2, p.getMonto());
+            ps.setDate(3, new java.sql.Date(p.getFecha().getTime()));
+            ps.setString(4, p.getTipo_pago());
+            ps.setInt(5, p.getId());
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("ERROR al actualizar pago: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean eliminar(int id) throws ClassNotFoundException {
+        String sql = "DELETE FROM pagos WHERE id = ?";
+        try {
+            conn = cn.conexion();
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("ERROR al eliminar pago: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public Pago buscarPorId(int id) throws ClassNotFoundException {
+        String sql = "SELECT * FROM pagos WHERE id = ?";
+        Pago p = new Pago();
+        try {
+            conn = cn.conexion();
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                p.setId(rs.getInt("id"));
+                p.setCredito_id(rs.getInt("credito_id"));
+                p.setMonto(rs.getDouble("monto"));
+                p.setFecha(rs.getDate("fecha"));
+                p.setTipo_pago(rs.getString("tipo_pago"));
+            }
+        } catch (SQLException e) {
+            System.out.println("ERROR al buscar pago: " + e.getMessage());
+        }
+        return p;
+    }
     
 }
