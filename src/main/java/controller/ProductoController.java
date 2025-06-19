@@ -23,21 +23,13 @@ import modelo.ProductoDao;
  */
 @WebServlet("/ProductoController")
 public class ProductoController extends HttpServlet {
+
     ProductoDao dao = new ProductoDao();
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -50,65 +42,102 @@ public class ProductoController extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String menu= request.getParameter("menu");
-        String accion= request.getParameter("accion");
-        if (menu.equals("admin")) {
-            request.getRequestDispatcher("admin/admin.jsp").forward(request, response);
-        }
-        if (menu.equals("Productos")) {
-            switch(accion){
-                case "Listar":
-                    List <Producto>lista_pro = null;
-                try {
-                    lista_pro = dao.listar();
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(ProductoController.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                    request.setAttribute("lista_Productos", lista_pro);
-                    break;
+        String menu = request.getParameter("menu");
+        String accion = request.getParameter("accion");
 
-                
-                
-            }
-            request.getRequestDispatcher("admin/productos.jsp").forward(request, response);
+        if ("admin".equals(menu)) {
+            request.getRequestDispatcher("admin/admin.jsp").forward(request, response);
+            return;
         }
-       
+
+        if ("Productos".equals(menu)) {
+            try {
+                switch (accion) {
+                    case "Listar":
+                        List<Producto> lista_pro = dao.listar();
+                        request.setAttribute("lista_Productos", lista_pro);
+                        break;
+
+                    case "Agregar":
+                        request.getRequestDispatcher("admin/registerPro.jsp").forward(request, response);
+                        return;
+
+                    case "Editar":
+                        int id = Integer.parseInt(request.getParameter("id"));
+                        Producto producto = dao.buscarPorId(id);
+                        request.setAttribute("producto", producto);
+                        request.getRequestDispatcher("admin/editarPro.jsp").forward(request, response);
+                        return;
+
+                    case "Eliminar":
+                        int idEliminar = Integer.parseInt(request.getParameter("id"));
+                        dao.eliminar(idEliminar);
+                        break;
+                }
+                List<Producto> lista_pro = dao.listar();
+                request.setAttribute("lista_Productos", lista_pro);
+                request.getRequestDispatcher("admin/productos.jsp").forward(request, response);
+            } catch (Exception ex) {
+                Logger.getLogger(ProductoController.class.getName()).log(Level.SEVERE, null, ex);
+                response.sendRedirect("admin/productos.jsp?error=1");
+            }
+        } else {
+            response.sendRedirect("admin/admin.jsp");
+        }
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String menu = request.getParameter("menu");
+        String accion = request.getParameter("accion");
+
+        if ("Productos".equals(menu)) {
+            try {
+                if ("Registrar".equals(accion)) {
+                    Producto p = new Producto();
+                    p.setNombre(request.getParameter("nombre"));
+                    p.setDescripcion(request.getParameter("descripcion"));
+                    p.setPrecio(Double.parseDouble(request.getParameter("precio")));
+                    p.setStock(Integer.parseInt(request.getParameter("stock")));
+
+                    boolean exito = dao.insertar(p);
+                    if (exito) {
+                        response.sendRedirect("ProductoController?menu=Productos&accion=Listar&success=1");
+                    } else {
+                        response.sendRedirect("admin/registerPro.jsp?error=1");
+                    }
+                    return;
+                }
+
+                if ("Actualizar".equals(accion)) {
+                    Producto p = new Producto();
+                    p.setId(Integer.parseInt(request.getParameter("id")));
+                    p.setNombre(request.getParameter("nombre"));
+                    p.setDescripcion(request.getParameter("descripcion"));
+                    p.setPrecio(Double.parseDouble(request.getParameter("precio")));
+                    p.setStock(Integer.parseInt(request.getParameter("stock")));
+                    dao.actualizar(p);
+                }
+
+                List<Producto> lista_pro = dao.listar();
+                request.setAttribute("lista_Productos", lista_pro);
+                request.getRequestDispatcher("admin/productos.jsp").forward(request, response);
+            } catch (Exception ex) {
+                Logger.getLogger(ProductoController.class.getName()).log(Level.SEVERE, null, ex);
+                response.sendRedirect("admin/productos.jsp?error=1");
+            }
+        } else {
+            response.sendRedirect("admin/admin.jsp");
+        }
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
-
+    }
 }
+

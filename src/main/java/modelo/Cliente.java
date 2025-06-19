@@ -3,7 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package modelo;
+
 import java.util.Date;
+
 /**
  *
  * @author jhoan
@@ -20,7 +22,7 @@ public class Cliente {
     private String correo;
     private String categoria_crediticia;
     private double limite_credito;
-    private Date fecha_registro;
+    private java.sql.Date fecha_registro;
 
     public Cliente() {
         // Constructor vacío
@@ -33,7 +35,7 @@ public class Cliente {
         this.correo = correo;
         this.categoria_crediticia = categoria_crediticia;
         this.limite_credito = limite_credito;
-        this.fecha_registro = fecha_registro;
+        this.fecha_registro = (java.sql.Date) fecha_registro;
     }
 
     // Getters
@@ -91,7 +93,7 @@ public class Cliente {
     }
 
     public void setFecha_registro(Date fecha_registro) {
-        this.fecha_registro = fecha_registro;
+        this.fecha_registro = (java.sql.Date) fecha_registro;
     }
 }
 

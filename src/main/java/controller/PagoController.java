@@ -78,6 +78,7 @@ PagoDao dao = new PagoDao();
                 }
                     request.setAttribute("lista_Pagos", lista_pa);
                     break;
+                    
 
                 
                 
